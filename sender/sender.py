@@ -101,7 +101,11 @@ def process_diskio(diskio, field):
     """
 
     total = 0
-    io_stats = diskio['io_service_bytes']
+    try {
+        io_stats = diskio['io_service_bytes']
+    } except KeyError {
+        io_stats = {}
+    }
     for entry in io_stats:
         total += entry['stats'][field]
 
@@ -148,6 +152,7 @@ for key, value in r.json().items():
         total_memory, min_memory, max_memory = total_min_max(memory_kb, total_memory, min_memory, max_memory)
     
         # Get the CPU load. The load value is always 0?
+        cpu = stat['cpu']
         cpu_load = cpu['load_average']
         total_load, min_load, max_load = total_min_max(cpu_load, total_load, min_load, max_load)
 
