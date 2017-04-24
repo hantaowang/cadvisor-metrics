@@ -3,6 +3,7 @@ import time
 print(os.system("sudo apt-get install redis-server")))
 print(os.system("sudo apt-get install python-pip"))
 print(os.system("sudo pip install falcon"))
+print(os.system("sudo pip install gunicorn"))
 print(os.system("sudo pip install redis"))
 print(os.system("sudo pip install requests"))
 print(os.system("sudo pip install python-dateutil"))
