@@ -24,5 +24,5 @@ time.sleep(5)
 print("##### RUNNING SCRIPT #####")
 while True:
     os.system("python ./cadvisor-metrics/sender/sender.py")
-    print("[", strftime("%Y-%m-%d %H:%M:%S", gmtime()), "]", "Ran Sender")
+    print("[", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), "]", "Ran Sender")
     time.sleep(60)
