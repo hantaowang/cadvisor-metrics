@@ -30,10 +30,10 @@ import os
 import sys
 
 # Determine the collector URL. The default collector.local address is used to make running via docker easier.
-if (len(sys.argv) == 0):
+if (len(sys.argv) > 0):
     endpoint = os.getenv('COLLECTOR_URL', 'http://0.0.0.0:8787/cadvisor/metrics/')
 else:
-    ip = sys.argv[0]
+    ip = sys.argv[1]
     endpoint = 'http://' + ip + ':8787/cadvisor/metrics/'
 
 # Determine the cadvisor URL. The default cadvisor.local address is used to make running via docker easier.
