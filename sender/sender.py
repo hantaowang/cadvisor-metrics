@@ -171,7 +171,8 @@ for key, value in r.json().items():
     end_cpu_usage = last['cpu']['usage']['total']
 
     # Network stats deltas
-    start_tx_bytes = first['network']['tx_bytes']
+    start_
+    bytes = first['network']['tx_bytes']
     end_tx_bytes = last['network']['tx_bytes']
     start_rx_bytes = first['network']['rx_bytes']
     end_rx_bytes = last['network']['rx_bytes']
@@ -183,10 +184,10 @@ for key, value in r.json().items():
     end_tx_errors = last['network']['tx_errors']
     start_rx_errors = first['network']['rx_errors']
     end_rx_errors = last['network']['rx_errors']
-    start_tx_drops = first['network']['tx_drops']
-    end_tx_drops = last['network']['tx_drops']
-    start_rx_drops = first['network']['rx_drops']
-    end_rx_drops = last['network']['rx_drops']
+    start_tx_drops = first['network']['tx_dropped']
+    end_tx_drops = last['network']['tx_dropped']
+    start_rx_drops = first['network']['rx_dropped']
+    end_rx_drops = last['network']['rx_dropped']
 
     # Compute Disk IO deltas
     start_async_bytes = process_diskio(first['diskio'], 'Async')
