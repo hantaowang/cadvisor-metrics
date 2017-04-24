@@ -101,11 +101,10 @@ def process_diskio(diskio, field):
     """
 
     total = 0
-    try {
+    try:
         io_stats = diskio['io_service_bytes']
-    } except KeyError {
+    except KeyError:
         io_stats = {}
-    }
     for entry in io_stats:
         total += entry['stats'][field]
 
