@@ -171,8 +171,7 @@ for key, value in r.json().items():
     end_cpu_usage = last['cpu']['usage']['total']
 
     # Network stats deltas
-    start_
-    bytes = first['network']['tx_bytes']
+    start_tx_bytes = first['network']['tx_bytes']
     end_tx_bytes = last['network']['tx_bytes']
     start_rx_bytes = first['network']['rx_bytes']
     end_rx_bytes = last['network']['rx_bytes']
