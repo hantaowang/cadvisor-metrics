@@ -35,7 +35,7 @@ import json
 import logging
 from multiprocessing import Process
 
-REDIS_HOST=os.getenv('COLLECTOR_REDIS_HOST', 'redis.local')
+REDIS_HOST=os.getenv('COLLECTOR_REDIS_HOST', '127.0.0.1')
 REDIS_PORT=int(os.getenv('COLLECTOR_REDIS_PORT', '6379'))
 PORT=int(os.getenv('COLLECTOR_PORT', '8787'))
 STATS_LEN=int(os.getenv('STATS_LEN', '1440'))
