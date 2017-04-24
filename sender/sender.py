@@ -243,7 +243,7 @@ stats_result['stats'] = entries
 r = requests.get('%s/machine' % cadvisor_base)
 stats_result['machine'] = r.json()
 
-print(json.dumps(stats_result))
+# print(json.dumps(stats_result))
 
 # POST the result to the collector
 headers = {'content-type': 'application/json'}
