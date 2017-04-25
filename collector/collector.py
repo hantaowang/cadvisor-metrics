@@ -41,7 +41,7 @@ PORT=int(os.getenv('COLLECTOR_PORT', '8787'))
 STATS_LEN=int(os.getenv('STATS_LEN', '1440'))
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler())
 
 class PurgeHandler():
