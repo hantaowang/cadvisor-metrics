@@ -1,5 +1,11 @@
 import os
 import time
+import sys
+
+assert len(sys.argv) > 0, "Must pass in 1 or more IP addresses"
+ips = sys.argv[1:]
+
+
 print("##### INSTALLING REDIS SERVER #####")
 os.system("sudo apt-get -y install redis-server")
 print("##### INSTALLING PYTHON PIP #####")
@@ -23,6 +29,7 @@ os.system("python ./cadvisor-metrics/collector/collector.py &")
 time.sleep(5)
 print("##### RUNNING SCRIPT #####")
 while True:
-    os.system("python ./cadvisor-metrics/sender/sender.py")
-    print("[", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), "]", "Ran Sender")
+    for (ip in ips):
+        os.system("python ./cadvisor-metrics/sender/sender.py " + ip)
+        print("[", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), "]", "Ran Sender for " + ip)
     time.sleep(60)

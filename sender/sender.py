@@ -1,9 +1,9 @@
 from __future__ import print_function
 
 """
-This script is intended to be run via cron every minute. 
+This script is intended to be run via cron every minute.
 It gathers the last minute of cadvisor stats, rolls them up and then
-uploads stats to the collector endpoint. 
+uploads stats to the collector endpoint.
 
 For this script to run, cadvisor (https://github.com/google/cadvisor) must be running
 along with the collector (see collector/collector.py).
@@ -30,22 +30,18 @@ import os
 import sys
 
 # Determine the collector URL. The default collector.local address is used to make running via docker easier.
-print(str(sys.argv))
-if (len(sys.argv) == 1):
-    endpoint = os.getenv('COLLECTOR_URL', 'http://0.0.0.0:8787/cadvisor/metrics/')
-else:
-    ip = sys.argv[1]
-    endpoint = 'http://' + ip + ':8787/cadvisor/metrics/'
+endpoint = os.getenv('COLLECTOR_URL', 'http://0.0.0.0:8787/cadvisor/metrics/')
 
+ip = sys.argv[1]
 # Determine the cadvisor URL. The default cadvisor.local address is used to make running via docker easier.
 # Note that port 8989 is being used below, which is not the standard port given in cadvisor's documentation examples.
-cadvisor_base = os.getenv('CADVISOR_URL', 'http://0.0.0.0:8080/api/v1.2')
+cadvisor_base = os.getenv('CADVISOR_URL', 'http://' + ip + ':8080/api/v1.2')
 
 # The following functions are examples of different approaches for detemining which containers to report stats on
 
 def match_all_but_cadvisor(name):
     """
-    Match on anything that isn't cadvisor. 
+    Match on anything that isn't cadvisor.
     """
     if 'cadvisor' in value['aliases']:
         return False
@@ -115,7 +111,7 @@ def process_diskio(diskio, field):
         total += entry['stats'][field]
 
     return total
-        
+
 
 # Connect to cadvisor and get the last minute's worth of stats (should be 60 stats per container)
 r = requests.get('%s/docker' % cadvisor_base)
@@ -135,7 +131,7 @@ for key, value in r.json().items():
 
     # Compute the timestamp, using the first second in this series
     ts = int(dateutil.parser.parse(value['stats'][0]['timestamp']).strftime('%s'))
-    
+
     # Run through all the stat entries for this container
     stats = value['stats']
     stats_len = len(stats) # Should always be 60
@@ -155,7 +151,7 @@ for key, value in r.json().items():
         memory = stat['memory']
         memory_kb = memory['usage']/1024.0
         total_memory, min_memory, max_memory = total_min_max(memory_kb, total_memory, min_memory, max_memory)
-    
+
         # Get the CPU load. The load value is always 0?
         cpu = stat['cpu']
         cpu_load = cpu['load_average']
@@ -252,6 +248,6 @@ stats_result['machine'] = r.json()
 # print(json.dumps(stats_result))
 
 # POST the result to the collector
-headers = {'content-type': 'application/json'}
+headers = {'content-type': 'application/json', 'data-source' : ip}
 post_result = requests.post(endpoint, data=json.dumps(stats_result), headers=headers)
 post_result.raise_for_status()

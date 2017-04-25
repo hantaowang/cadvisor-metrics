@@ -11,7 +11,7 @@ Installation:
 Environment variable examples:
 
     COLLECTOR_PORT=8787
-    COLLECTOR_REDIS_HOST=192.168.222.5 
+    COLLECTOR_REDIS_HOST=192.168.222.5
     COLLECTOR_REDIS_PORT=6379
     STATS_LEN=1440
 
@@ -100,8 +100,8 @@ class StatHandler():
         ts = entry['timestamp']
 
         # Take the machine info and store it by IP
-        machine = entry['machine'] 
-        r.set('ip:%s' % remote_ip, json.dumps(machine)) 
+        machine = entry['machine']
+        r.set('ip:%s' % remote_ip, json.dumps(machine))
         r.expire('ip:%s' % remote_ip, 1*24*60*60)
 
         # For each container being reported, record info in Redis
@@ -174,7 +174,7 @@ class CadvisorMetricsResource(object):
         """
 
         # Get the IP of the host sending stats
-        remote_ip = req.env['REMOTE_ADDR']
+        remote_ip = req.headers['data-source']
 
         # The cadvisor data is JSON in the request body
         body = req.stream.read()
@@ -219,5 +219,3 @@ if __name__ == '__main__':
     collector = CollectorApp()
     httpd = simple_server.make_server('0.0.0.0', PORT, collector.build_app())
     httpd.serve_forever()
-
-
