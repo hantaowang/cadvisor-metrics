@@ -174,7 +174,7 @@ class CadvisorMetricsResource(object):
         """
 
         # Get the IP of the host sending stats
-        remote_ip = req.headers['data-source']
+        remote_ip = req.env['REMOTE_ADDR']
 
         # The cadvisor data is JSON in the request body
         body = req.stream.read()

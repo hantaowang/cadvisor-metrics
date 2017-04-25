@@ -248,6 +248,6 @@ stats_result['machine'] = r.json()
 # print(json.dumps(stats_result))
 
 # POST the result to the collector
-headers = {'content-type': 'application/json', 'data-source' : ip}
+headers = {'content-type': 'application/json'}
 post_result = requests.post(endpoint, data=json.dumps(stats_result), headers=headers)
 post_result.raise_for_status()
