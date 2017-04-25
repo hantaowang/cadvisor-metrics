@@ -29,7 +29,7 @@ os.system("python ./cadvisor-metrics/collector/collector.py &")
 time.sleep(5)
 print("##### RUNNING SCRIPT #####")
 while True:
-    for (ip in ips):
+    for ip in ips:
         os.system("python ./cadvisor-metrics/sender/sender.py " + ip)
         print("[", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), "]", "Ran Sender for " + ip)
     time.sleep(60)
