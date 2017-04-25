@@ -2,7 +2,7 @@ import os
 import time
 import sys
 
-ip = sys.argv[0]
+ip = sys.argv[1]
 
 print("##### INSTALLING PYTHON PIP #####")
 os.system("sudo apt-get -y install python-pip")
