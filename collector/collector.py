@@ -93,7 +93,7 @@ class StatHandler():
         Given a stats entry and IP, store the stats and machine data in Redis.
         """
 
-        self.logger.info("Collector got a request from sender at " + str(remote_ip))
+        self.logger.info("Collector got a request from sender")
         #print(entry)
 
         r = redis.StrictRedis(host=self.redis_host, port=self.redis_port)
@@ -120,7 +120,7 @@ class StatHandler():
             if not r.sismember('names', name):
 
                 # Lookup external data that might be of use upstream
-                if not self._get_metadata(name, r, ignore_fail=False):
+                if not self._get_metadata(self, name, r, ignore_fail=False):
                     # Skip this entry if we have trouble looking up info
                     continue
 

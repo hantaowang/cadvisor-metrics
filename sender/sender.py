@@ -32,10 +32,10 @@ import sys
 # Determine the collector URL. The default collector.local address is used to make running via docker easier.
 endpoint = os.getenv('COLLECTOR_URL', 'http://0.0.0.0:8787/cadvisor/metrics/')
 
-ip = sys.argv[1]
+
 # Determine the cadvisor URL. The default cadvisor.local address is used to make running via docker easier.
 # Note that port 8989 is being used below, which is not the standard port given in cadvisor's documentation examples.
-cadvisor_base = os.getenv('CADVISOR_URL', 'http://' + ip + ':8080/api/v1.2')
+cadvisor_base = os.getenv('CADVISOR_URL', 'http://0.0.0.0:8080/api/v1.2')
 
 # The following functions are examples of different approaches for detemining which containers to report stats on
 

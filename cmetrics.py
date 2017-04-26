@@ -1,35 +1,63 @@
 import os
 import time
 import sys
+import subprocess
+import ipaddress
 
-assert len(sys.argv) > 0, "Must pass in 1 or more IP addresses"
-ips = sys.argv[1:]
+def senderCommand(ip):
+    command = ("sudo docker run -d"
+    "  -e 'COLLECTOR_URL=http://0.0.0.0:8787/cadvisor/metrics/'"
+    "  -e 'CADVISOR_URL=http://" + ip + ":8080/api/v1.2'"
+    " --restart on-failure:5 --net=host"
+    " --name=sender" + ip + ""
+    " hantaowang/sender:latest")
+    os.system(command)
 
+def collectorCommand(ip="0.0.0.0"):
+    command = ("sudo docker run"
+    "  -e 'COLLECTOR_REDIS_HOST=" + ip + "'"
+    "  -e 'COLLECTOR_REDIS_PORT=6379'"
+    "  -e 'COLLECTOR_PORT=8787'"
+    "  --restart on-failure:5"
+    "  --name=collector"
+    "  -p 8787:8787 -d --name=collector"
+    "  --net=host"
+    "  hantaowang/collector:latest")
+    os.system(command)
 
-print("##### INSTALLING REDIS SERVER #####")
-os.system("sudo apt-get -y install redis-server")
-print("##### INSTALLING PYTHON PIP #####")
-os.system("sudo apt-get -y install python-pip")
-print("##### INSTALLING PIP FALCON #####")
-os.system("sudo pip install falcon")
-print("##### INSTALLING PIP GUNICORN #####")
-os.system("sudo pip install gunicorn")
-print("##### INSTALLING PIP REDIS #####")
-os.system("sudo pip install redis")
-print("##### INSTALLING PIP REQUESTS #####")
-os.system("sudo pip install requests")
-print("##### INSTALLING PIP DATEUTIL #####")
-os.system("sudo pip install python-dateutil")
-print("##### SETTING ENVIRONMENT VARIABLES #####")
-os.system("export COLLECTOR_REDIS_HOST=127.0.0.1")
-os.system("export COLLECTOR_URL=http://0.0.0.0:8787/cadvisor/metrics/")
-os.system("export CADVISOR_URL=http://0.0.0.0:8080/api/v1.2")
-print("##### RUNNING COLLECTOR #####")
-os.system("python ./cadvisor-metrics/collector/collector.py &")
-time.sleep(5)
-print("##### RUNNING SCRIPT #####")
-while True:
-    for ip in ips:
-        os.system("python ./cadvisor-metrics/sender/sender.py " + ip)
-        print("[", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), "]", "Ran Sender for " + ip)
-    time.sleep(60)
+def getIP():
+    ips = []
+    disconnected = 0
+    total = 0
+    results = subprocess.check_output("quilt ps", shell=True).decode("utf-8")
+    os.system('clear')
+    print(results)
+    results = results.split()
+    for line in results:
+        line = line.strip()
+        if "disconnected" == line:
+            disconnected += 1
+        elif ("Worker" == line) or ("Master" == line):
+            total += 1;
+        try:
+            ipaddress.ip_address(line)
+            ips.append(line)
+        except ValueError:
+            next
+    if (disconnected == 0 and total != 0):
+        return ips
+    return disconnected
+
+ips = getIP()
+
+while (isinstance(ips, int)):
+    time.sleep(5)
+    ips = getIP()
+
+os.system("sudo docker kill $(docker ps -aq)")
+os.system("sudo docker rm $(docker ps -aq)")
+os.system("sudo redis-cli shutdown")
+os.system("sudo docker run --name=redis -p 6379:6379 -d redis")
+collectorCommand()
+for ip in ips:
+    senderCommand(ip)
