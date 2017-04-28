@@ -8,4 +8,4 @@ The purpose of this fork is to integrate cAdvisor with [Quilt](https://github.co
 ### Changes
 cmetrics.py acts as the main tool to automate the setup and take down of cMetrics. It parses Quilt output and sets up cmetrics to conncet to the appropriate cAdvisor instances. To begin, simply run `python cmetrics.py start.` Run `python cmetrics.py` to see a full list of commands and what each does. 
 
-Changes were made to the the sender and collector docker images to provide better integration with Quilt and Redis. There were also some bug fixes to sender.py.
+Changes were made to the the sender and collector docker images to provide better integration with Quilt and Redis. There were also some bug fixes to sender.py.  

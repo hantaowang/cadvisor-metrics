@@ -1,1 +1,1 @@
-python /sender.py
+python /sender-setup.py
