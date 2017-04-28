@@ -2,16 +2,22 @@ import os
 import subprocess
 
 def stopContainer(name):
-    if len(subprocess.check_output("docker ps -q -f status=running -f name=" + name, shell=True).decode("utf-8")) > 0:
+    if len(subprocess.check_output("docker ps -aq -f status=running -f name=" + name, shell=True).decode("utf-8")) > 0:
         os.system("docker stop " + name)
-    if len(subprocess.check_output("docker ps -q -f status=exited -f name=" + name, shell=True).decode("utf-8")) > 0:
+    if len(subprocess.check_output("docker ps -aq -f name=" + name, shell=True).decode("utf-8")) > 0:
         os.system("docker rm " + name)
 
 class Commands:
 
     # Stops and removes the containers if it is running
     @staticmethod
-    def stopAllContainers():
+    def stopAllContainers(all=False):
+        if all:
+            if len(subprocess.check_output("docker ps -aq -f status=running", shell=True).decode("utf-8")) > 0:
+                os.system("sudo docker kill $(docker ps -aq -f status=running)")
+            if len(subprocess.check_output("docker ps -aq", shell=True).decode("utf-8")) > 0:
+                os.system("sudo docker rm $(docker ps -aq)")
+            return
         stopContainer("cmetrics-redis")
         stopContainer("cmetrics-sender")
         stopContainer("cmetrics-collector")
@@ -27,7 +33,7 @@ class Commands:
             "  --name=cmetrics-collector"
             "  -p 8787:8787 -d"
             "  --net=host"
-            "  hantaowang/collector:latest")
+            "  hantaowang/collector:stable")
         os.system(command)
 
     # Starts the docker sender container
@@ -40,7 +46,7 @@ class Commands:
         " -e 'CADVISOR_IPS=" + ipString + "'"
         " --restart on-failure:5 --net=host"
         " --name=cmetrics-sender"
-        " hantaowang/sender:latest")
+        " hantaowang/sender:stable")
         os.system(command)
 
     # Starts the docker redis container

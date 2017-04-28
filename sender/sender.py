@@ -22,12 +22,12 @@ import os
 import sys
 
 # Determine the collector URL. The default collector.local address is used to make running via docker easier.
-endpoint = "http://0.0.0.0:8787/cadvisor/metrics/""
+endpoint = "http://0.0.0.0:8787/cadvisor/metrics/"
 
 
 # Determine the cadvisor URL. The default cadvisor.local address is used to make running via docker easier.
 # Note that port 8989 is being used below, which is not the standard port given in cadvisor's documentation examples.
-cadvisor_base "http://" + sys.argv[1] + ":8080/api/v1.2')
+cadvisor_base = "http://" + sys.argv[1] + ":8080/api/v1.2"
 
 # The following functions are examples of different approaches for detemining which containers to report stats on
 
@@ -243,3 +243,4 @@ stats_result['machine'] = r.json()
 headers = {'content-type': 'application/json'}
 post_result = requests.post(endpoint, data=json.dumps(stats_result), headers=headers)
 post_result.raise_for_status()
+#print("ran sender for", str(sys.argv[1]))

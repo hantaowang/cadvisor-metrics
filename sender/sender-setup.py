@@ -1,23 +1,23 @@
-import sys
 import os
+import subprocess
 import threading
+import time
 
-cadvisor_base = os.getenv('CADVISOR_IPS', '0.0.0.0').split(" ")
-ipList = list(map(lambda x: x.strip(), cadvisor_base))
+ipList = os.getenv('CADVISOR_IPS', '0.0.0.0').strip().split()
+
+time.sleep(60)
 
 print("Starting senders")
 print(ipList)
 
-def runSenders():
-    threading.Timer(60, runSenders).start()
-    for ip in ipList:
-        try:
-            print("running sender for " + ip)
-            os.spawnl(os.P_DETACH, "python sender.py " + ip)
-            print("ran sender for " + ip)
-        except Error as err:
-            print err
-            next
+# for ip in ipList:
+#     print("Running sender for " + ip)
+#     os.system("python sender.py " + ip)
 
-# start calling f now and every 60 sec thereafter
-runSenders()
+while True:
+    t1 = time.clock()
+    for ip in ipList:
+        t1 = time.clock()
+        print("Running sender for " + ip)
+        os.system("python sender.py " + ip)
+    time.sleep(60 - time.clock() + t1)
