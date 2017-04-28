@@ -17,7 +17,6 @@ print(ipList)
 while True:
     t1 = time.clock()
     for ip in ipList:
-        t1 = time.clock()
         print("Running sender for " + ip)
         os.system("python sender.py " + ip)
     time.sleep(60 - time.clock() + t1)
