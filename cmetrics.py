@@ -10,7 +10,7 @@ def senderCommand(ip):
     "  -e 'CADVISOR_URL=http://" + ip + ":8080/api/v1.2'"
     " --restart on-failure:5 --net=host"
     " --name=sender" + ip + ""
-    " hantaowang/sender:latest")
+    " hantaowang/sender:stable")
     os.system(command)
 
 def collectorCommand(ip="0.0.0.0"):
@@ -22,7 +22,7 @@ def collectorCommand(ip="0.0.0.0"):
     "  --name=collector"
     "  -p 8787:8787 -d --name=collector"
     "  --net=host"
-    "  hantaowang/collector:latest")
+    "  hantaowang/collector:stable")
     os.system(command)
 
 def getIP():
