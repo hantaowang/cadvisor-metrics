@@ -5,20 +5,12 @@ This script is intended to be run via cron every minute.
 It gathers the last minute of cadvisor stats, rolls them up and then
 uploads stats to the collector endpoint.
 
-For this script to run, cadvisor (https://github.com/google/cadvisor) must be running
-along with the collector (see collector/collector.py).
-
-Environment variable examples:
-
-    # The URL for the cadvisor API
-    CADVISOR_URL=http://192.168.222.5:8989/api/v1.2
-
-    # The URL for the collector endpoint
-    COLLECTOR_URL=http://192.168.222.5:8787/cadvisor/metrics
+The cadvisor ip argument must be provided. The default cadvisor port 8080
+is assumed to be used.
 
 Running:
 
-    python sender.py
+    python sender.py 0.0.0.0
 
 """
 import time
@@ -30,12 +22,12 @@ import os
 import sys
 
 # Determine the collector URL. The default collector.local address is used to make running via docker easier.
-endpoint = os.getenv('COLLECTOR_URL', 'http://0.0.0.0:8787/cadvisor/metrics/')
+endpoint = "http://0.0.0.0:8787/cadvisor/metrics/""
 
 
 # Determine the cadvisor URL. The default cadvisor.local address is used to make running via docker easier.
 # Note that port 8989 is being used below, which is not the standard port given in cadvisor's documentation examples.
-cadvisor_base = os.getenv('CADVISOR_URL', 'http://0.0.0.0:8080/api/v1.2')
+cadvisor_base "http://" + sys.argv[1] + ":8080/api/v1.2')
 
 # The following functions are examples of different approaches for detemining which containers to report stats on
 

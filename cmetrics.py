@@ -2,29 +2,28 @@ import os
 import time
 import sys
 import subprocess
-import ipaddress
+import socket
+from dockerCommands import Commands
 
-def senderCommand(ip):
-    command = ("sudo docker run -d"
-    "  -e 'COLLECTOR_URL=http://0.0.0.0:8787/cadvisor/metrics/'"
-    "  -e 'CADVISOR_URL=http://" + ip + ":8080/api/v1.2'"
-    " --restart on-failure:5 --net=host"
-    " --name=sender" + ip + ""
-    " hantaowang/sender:latest")
-    os.system(command)
+# Parses the command arguments
+if len(sys.argv) == 1:
+    command = None
+else:
+    command = sys.argv[1]
+if command == "stop":
+    Commands.stopAllContainers()
+    sys.exit()
+if command != None and command != "start":
+    print command + "is not a valid commnad"
+if command != "start":
+    print ("Here is a list of valid commands\n"
+    "  start    sets up and starts the cMetrics docker container\n"
+    "  stop     stops and removes the cMetrics docker containers")
+    sys.exit()
+Commands.stopAllContainers()
 
-def collectorCommand(ip="0.0.0.0"):
-    command = ("sudo docker run"
-    "  -e 'COLLECTOR_REDIS_HOST=" + ip + "'"
-    "  -e 'COLLECTOR_REDIS_PORT=6379'"
-    "  -e 'COLLECTOR_PORT=8787'"
-    "  --restart on-failure:5"
-    "  --name=collector"
-    "  -p 8787:8787 -d --name=collector"
-    "  --net=host"
-    "  hantaowang/collector:latest")
-    os.system(command)
-
+# Parses the "quilt ps" output to retrieve all machine IPs.
+# Only returns IPs if all machines are connected
 def getIP():
     ips = []
     disconnected = 0
@@ -40,24 +39,21 @@ def getIP():
         elif ("Worker" == line) or ("Master" == line):
             total += 1;
         try:
-            ipaddress.ip_address(line)
+            socket.inet_aton(line)
             ips.append(line)
-        except ValueError:
+        except socket.error:
             next
     if (disconnected == 0 and total != 0):
         return ips
     return disconnected
 
+# Waits until all machines are conncted and then parses IPs
 ips = getIP()
-
 while (isinstance(ips, int)):
     time.sleep(5)
     ips = getIP()
 
-os.system("sudo docker kill $(docker ps -aq)")
-os.system("sudo docker rm $(docker ps -aq)")
-os.system("sudo redis-cli shutdown")
-os.system("sudo docker run --name=redis -p 6379:6379 -d redis")
-collectorCommand()
-for ip in ips:
-    senderCommand(ip)
+# Sets up a docker containers
+Commands.redis()
+Commands.collector()
+Commands.sender(ips)
