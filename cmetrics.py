@@ -72,5 +72,4 @@ print "Found these IPs beloning to worker machines: " + str(ips)
 
 # Sets up a docker containers
 Commands.redis()
-Commands.collector()
-Commands.sender(ips)
+Commands.cmetrics(ips)
