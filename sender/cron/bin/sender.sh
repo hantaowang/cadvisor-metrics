@@ -1,1 +1,0 @@
-python /sender-setup.py
