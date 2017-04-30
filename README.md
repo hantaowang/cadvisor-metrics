@@ -1,6 +1,6 @@
 # cAdvisor Metrics
 
-This repo is a fork of the cadvisor-metrics (cmetrics) tool published by Catalyze. You can read the origina full length ReadMe in their [repo](https://github.com/catalyzeio/cadvisor-metrics). The topics here focus on the changes made on this fork.
+This repo is a fork of the cadvisor-metrics (cmetrics) tool published by Catalyze. You can read the original full length ReadMe in their [repo](https://github.com/catalyzeio/cadvisor-metrics). The topics here focus on the changes made on this fork.
 
 ### Overview
 The purpose of this fork is to integrate cAdvisor with [Quilt](https://github.com/quilt/) in order to monitor and analyze cpu, memory, disk, and network data across a distributed system. It is intended as a dependency for the [ThrottleBot](https://github.com/mchang6137/throttlebot), which aims to find resource bottlenecks in a distributed containerized application.
