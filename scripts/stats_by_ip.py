@@ -43,12 +43,12 @@ def aggregate_stats(containers):
                 result[i]['memory']['min'] += stat['memory']['min']
                 result[i]['memory']['ave'] += stat['memory']['ave']
                 result[i]['memory']['max'] += stat['memory']['max']
-                result[i]['network']['tx_bytes']['min'] += stat['network']['rx_bytes']['min']
-                result[i]['network']['tx_bytes']['ave'] += stat['network']['rx_bytes']['ave']
-                result[i]['network']['tx_bytes']['max'] += stat['network']['rx_bytes']['max']
-                result[i]['network']['rx_bytes']['min'] += stat['network']['rx_bytes']['min']
-                result[i]['network']['rx_bytes']['ave'] += stat['network']['rx_bytes']['ave']
-                result[i]['network']['rx_bytes']['max'] += stat['network']['rx_bytes']['max']
+                result[i]['network']['tx_kb']['min'] += stat['network']['rx_kb']['min']
+                result[i]['network']['tx_kb']['ave'] += stat['network']['rx_kb']['ave']
+                result[i]['network']['tx_kb']['max'] += stat['network']['rx_kb']['max']
+                result[i]['network']['rx_kb']['min'] += stat['network']['rx_kb']['min']
+                result[i]['network']['rx_kb']['ave'] += stat['network']['rx_kb']['ave']
+                result[i]['network']['rx_kb']['max'] += stat['network']['rx_kb']['max']
                 result[i]['network']['tx_packets']['min'] += stat['network']['rx_packets']['min']
                 result[i]['network']['tx_packets']['ave'] += stat['network']['rx_packets']['ave']
                 result[i]['network']['tx_packets']['max'] += stat['network']['rx_packets']['max']
@@ -73,7 +73,7 @@ for name in names:
     if not name_info:
          print('Missing data for name: %s' % name)
          continue
- 
+
     name_data = json.loads(r.get('name:%s' % name).decode())
     try:
         ip = name_data.get('remote_ip', None)
@@ -88,12 +88,10 @@ for name in names:
     by_ip[ip] = entry
 
 # Compute the final result, aggregating all the container stats for each IP
-print('interval,ip,memory,cpu,txbytes,rxbytes,io_async,io_sync,io_read,io_write')
+print('interval,ip,memory,cpu,txkb,rxkb,io_async,io_sync,io_read,io_write')
 for ip, containers in by_ip.iteritems():
     aggregate = aggregate_stats(containers)
     #result = {'ip': ip, 'stats': aggregate}
     for i, stat in enumerate(aggregate):
-        line = '%d,%s,%d,%d,%d,%d,%d,%d,%d,%d' % (i, ip, stat['memory']['ave'], stat['cpu']['usage'], stat['network']['tx_bytes']['ave'], stat['network']['rx_bytes']['ave'], stat['diskio']['async'],stat['diskio']['sync'], stat['diskio']['read']/1024, stat['diskio']['write']/1024)
+        line = '%d,%s,%d,%d,%d,%d,%d,%d,%d,%d' % (i, ip, stat['memory']['ave'], stat['cpu']['usage'], stat['network']['tx_kb']['ave'], stat['network']['rx_kb']['ave'], stat['diskio']['async'],stat['diskio']['sync'], stat['diskio']['read']/1024, stat['diskio']['write']/1024)
         print(line)
-    
-    

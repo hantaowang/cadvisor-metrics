@@ -2,7 +2,6 @@ import os
 import time
 import sys
 import subprocess
-import re
 from dockerCommands import Commands
 
 commands = ["start", "stop", "kill-all"]
@@ -38,14 +37,14 @@ def getValues():
             return -1
         elif "Worker" in line:
             getIP(line, ips)
-        elif "LABELS" in line:
-            labelIndex = line.index("LABEL")
-            statusIndex = line.index("STATUS")
-        elif "running" in line:
-            getNames(line, values, ips, labelIndex, statusIndex)
-        elif len(items) > 0 and items[1] not in fourthItem and items[4] not in fourthItem:
-            print items
-            return -1
+        # elif "LABELS" in line:
+        #     labelIndex = line.index("LABEL")
+        #     statusIndex = line.index("STATUS")
+        # elif "running" in line:
+        #     getNames(line, values, ips, labelIndex, statusIndex)
+        # elif len(items) > 0 and items[1] not in fourthItem and items[4] not in fourthItem:
+        #     print items
+        #     return -1
     return (ips, values)
 
 # Parses a line to retrieve the IP and its matching machine ID
@@ -54,12 +53,12 @@ def getIP(line, ips):
     ips[line[0]] = line[5].encode("utf-8")
 
 # Parses a line to retrieve the IP and its matching containers. Currently unused.
-def getNames(line, values, ips, a, b):
-    name = line[a:b].strip()
-    line = line.split()
-    if ips[line[1]] not in values:
-        values[ips[line[1]]] = []
-    values[ips[line[1]]].append((line[0], name + "@" + ips[line[1]]))
+# def getNames(line, values, ips, a, b):
+#     name = line[a:b].strip()
+#     line = line.split()
+#     if ips[line[1]] not in values:
+#         values[ips[line[1]]] = []
+#     values[ips[line[1]]].append((line[0], name + "@" + ips[line[1]]))
 
 # Waits until all machines are conncted and then parses IPs
 values = getValues()

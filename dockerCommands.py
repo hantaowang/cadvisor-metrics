@@ -46,7 +46,7 @@ class Commands:
         " -e 'CADVISOR_IPS=" + ipString + "'"
         " --restart on-failure:5 --net=host"
         " --name=cmetrics-sender"
-        " hantaowang/sender:stable")
+        " hantaowang/sender:latest")
         os.system(command)
 
     # Starts the docker redis container

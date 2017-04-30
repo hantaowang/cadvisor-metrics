@@ -31,7 +31,7 @@ cadvisor_base = "http://" + sys.argv[1] + ":8080/api/v1.2"
 
 # The following functions are examples of different approaches for detemining which containers to report stats on
 
-def match_all_but_cadvisor(name):
+def match_all_but_defaults(name):
     """
     Match on anything that isn't cadvisor.
     """
@@ -66,12 +66,12 @@ def match_on_uuid(name):
 
 # Set the function to use when determining which containers to report on
 # Set the MATCH_TYPE environment variable to UUID or NO_CADVISOR to change the function to use
-match_type_name = os.getenv('MATCH_TYPE', 'ALL')
+match_type_name = os.getenv('MATCH_TYPE', 'NO_DEFAULTS')
 match_container_name = match_all # Default
 if match_type_name == 'UUID':
     match_container_name = match_on_uuid
-elif match_type_name == 'NO_CADVISOR':
-    match_container_name = match_all_but_cadvisor
+elif match_type_name == 'NO_DEFAULTS':
+    match_container_name = match_all_but_defaults
 
 def total_min_max(stat, s_total, s_min, s_max):
     """
@@ -145,8 +145,8 @@ for key, value in r.json().items():
         total_memory, min_memory, max_memory = total_min_max(memory_kb, total_memory, min_memory, max_memory)
 
         # Get the CPU load. The load value is always 0?
-        cpu = stat['cpu']
-        cpu_load = cpu['load_average']
+        cpu = stat['cpu']['usage']
+        cpu_load = cpu['total']
         total_load, min_load, max_load = total_min_max(cpu_load, total_load, min_load, max_load)
 
     # Initialize the entry for this container
