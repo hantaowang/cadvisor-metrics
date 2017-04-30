@@ -10,11 +10,10 @@ REDIS_HOST=os.getenv('COLLECTOR_REDIS_HOST', '127.0.0.1')
 REDIS_PORT=int(os.getenv('COLLECTOR_REDIS_PORT', '6379'))
 STATS_LEN=int(os.getenv('STATS_LEN', '1440'))
 IP_LIST = os.getenv('CADVISOR_IPS', '0.0.0.0').strip().split(",")
-IP_LIST = ["54.193.79.14", "52.53.231.12", "54.219.176.151"]
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 lastTime = 0
 def postToRedis(ip):
-    results = poll(ip)
+    results = poll(ip.strip())
     print(datetime.now().strftime('%H:%M:%S.%f') + " polled " + ip)
     for re in results["stats"]:
         r.sadd("names", re["name"])

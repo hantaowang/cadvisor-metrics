@@ -7,7 +7,7 @@ Usage:
     results = poll(0.0.0.0)
 
 """
-import time
+from datetime import datetime
 import requests
 import dateutil.parser
 
@@ -61,7 +61,7 @@ def getStats(ip):
             container_name = name[0:10] + "@" + ip
 
         # Compute the timestamp, using the first second in this series
-        ts = int(dateutil.parser.parse(value['stats'][0]['timestamp']).strftime('%s'))
+        ts = dateutil.parser.parse(value['stats'][0]['timestamp']).strftime('%X')
 
         # Run through all the stat entries for this container
         stats = value['stats'][-5:]
@@ -169,7 +169,7 @@ def getStats(ip):
 def poll(ip):
     # Create the final result to send to the collector
     stats_result = {}
-    stats_result['timestamp'] = int(time.time()) # Epoch time for when this entry was computed (in seconds)
+    stats_result['timestamp'] = datetime.now().strftime("%X") # Epoch time for when this entry was computed (in seconds)
     stats_result['stats'] = getStats(ip)
     stats_result['interval'] = interval # The duration of this stat entry in seconds
     stats_result[ip] = ip
