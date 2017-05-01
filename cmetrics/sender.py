@@ -61,10 +61,10 @@ def getStats(ip):
             container_name = name[0:10] + "@" + ip
 
         # Compute the timestamp, using the first second in this series
-        ts = dateutil.parser.parse(value['stats'][0]['timestamp']).strftime('%X')
-
         # Run through all the stat entries for this container
         stats = value['stats'][-5:]
+        ts = dateutil.parser.parse(stats[0]['timestamp']).strftime('%X')
+        ts2 = dateutil.parser.parse(stats[-1]['timestamp']).strftime('%X')
         stats_len = 5
 
         # Initialize min/max/total variables for memory, cpu
@@ -91,7 +91,7 @@ def getStats(ip):
             total_load, min_load, max_load = total_min_max(cpu_load, total_load, min_load, max_load)
 
         # Initialize the entry for this container
-        entry = {'name': container_name, 'ts' : ts}
+        entry = {'name': container_name, 'ts' : ts, 'ts2' : ts2}
         entry['cpu'] = {}
         entry['memory'] = {}
         entry['network'] = {}

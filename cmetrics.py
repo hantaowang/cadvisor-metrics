@@ -2,9 +2,8 @@ import os
 import time
 import sys
 import subprocess
-from dockerCommands import Commands
-
-commands = ["start", "stop", "kill-all"]
+from dockerCommands import *
+commands = ["start", "stop", "kill-all", "visualize"]
 
 # Parses the command arguments
 if len(sys.argv) == 1 or sys.argv[1] not in commands:
@@ -13,10 +12,15 @@ if len(sys.argv) == 1 or sys.argv[1] not in commands:
     print ("Here is a list of all valid commands\n"
     "  start      sets up and starts the cMetrics docker container\n"
     "  stop       stops and removes the cMetrics docker containers\n"
-    "  kill-all   kills all running docker containers")
+    "  kill-all   kills all running docker containers\n"
+    "  visualize  starts a jupyter notebook and plots results")
     sys.exit()
 
-Commands.stopAllContainers(sys.argv[1] == "kill-all")
+if sys.argv[1] == "visualize":
+    stopContainer("jupyter")
+    jupyter()
+else:
+    stopAllContainers(sys.argv[1] == "kill-all")
 if sys.argv[1] != "start":
     sys.exit()
 
@@ -71,5 +75,5 @@ print "Found these IPs beloning to worker machines: " + str(ips)
 #print names
 
 # Sets up a docker containers
-Commands.redis()
-Commands.cmetrics(ips)
+redis()
+cmetrics(ips)

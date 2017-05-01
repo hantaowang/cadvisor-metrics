@@ -14,7 +14,7 @@ r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 lastTime = 0
 def postToRedis(ip):
     results = poll(ip.strip())
-    print(datetime.now().strftime('%H:%M:%S.%f') + " polled " + ip)
+    print("polled " + ip + " for data from " + results["stats"][0]["ts2"] + " to " + results["stats"][0]["ts"])
     for re in results["stats"]:
         r.sadd("names", re["name"])
         r.lpush(re["name"], json.dumps(re))
