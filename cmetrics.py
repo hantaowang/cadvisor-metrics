@@ -1,8 +1,23 @@
+"""
+To run cmetrics. First make sure you start quilt.
+
+    1) $ python cmetrics.py start
+    2) $ jupyter notebook
+    3) go to the notebook and open visualizer.ipynb
+
+To shutdown
+    1) $ python cmetrics.py stop
+    2) Ctrl-C jupyter notebook process
+
+"""
+
 import os
 import time
 import sys
 import subprocess
 from dockerCommands import *
+
+# List of all possible comands
 commands = ["start", "stop", "kill-all", "visualize"]
 
 # Parses the command arguments
