@@ -45,8 +45,9 @@ def process_diskio(diskio, field):
 
     return total
 
-def getStats(ip):
-    cadvisor_url = "http://" + ip + ":8080/api/v1.2/docker"
+
+def getStats(ip, port):
+    cadvisor_url = "http://" + ip + ":" + port + "/api/v1.2/docker"
     # Connect to cadvisor and get the 5 last stats
     r = requests.get(cadvisor_url)
     entries = []
@@ -63,8 +64,8 @@ def getStats(ip):
         # Compute the timestamp, using the first second in this series
         # Run through all the stat entries for this container
         stats = value['stats'][-5:]
-        ts = dateutil.parser.parse(stats[0]['timestamp']).strftime('%X')
-        ts2 = dateutil.parser.parse(stats[-1]['timestamp']).strftime('%X')
+        ts = dateutil.parser.parse(stats[0]['timestamp']).ctime()
+        ts2 = dateutil.parser.parse(stats[-1]['timestamp']).ctime()
         stats_len = 5
 
         # Initialize min/max/total variables for memory, cpu
@@ -91,7 +92,7 @@ def getStats(ip):
             total_load, min_load, max_load = total_min_max(cpu_load, total_load, min_load, max_load)
 
         # Initialize the entry for this container
-        entry = {'name': container_name, 'start' : ts, 'end' : ts2}
+        entry = {'name': container_name, 'ts' : ts, 'ts2' : ts2}
         entry['cpu'] = {}
         entry['memory'] = {}
         entry['network'] = {}
@@ -166,11 +167,11 @@ def getStats(ip):
 
     return entries
 
-def poll(ip):
+def poll(ip, port="8000"):
     # Create the final result to send to the collector
     stats_result = {}
     stats_result['timestamp'] = datetime.now().strftime("%X") # Epoch time for when this entry was computed (in seconds)
-    stats_result['stats'] = getStats(ip)
+    stats_result['stats'] = getStats(ip, port)
     stats_result['interval'] = interval # The duration of this stat entry in seconds
     stats_result[ip] = ip
     return stats_result
