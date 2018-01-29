@@ -91,7 +91,7 @@ def getStats(ip):
             total_load, min_load, max_load = total_min_max(cpu_load, total_load, min_load, max_load)
 
         # Initialize the entry for this container
-        entry = {'name': container_name, 'start' : ts, 'end' : ts2}
+        entry = {'name': container_name, 'ts1' : ts, 'ts2' : ts2}
         entry['cpu'] = {}
         entry['memory'] = {}
         entry['network'] = {}

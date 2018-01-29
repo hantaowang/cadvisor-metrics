@@ -21,7 +21,7 @@ def newmachine():
 
 
 @app.route('/getdatapoints')
-def newmachine():
+def getdatapoints():
     container_id = request.form.get('containerid', None)
     period = request.form.get('period', "30")
     if container_id is not None:
