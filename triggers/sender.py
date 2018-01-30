@@ -11,7 +11,7 @@ from datetime import datetime
 import requests
 import dateutil.parser
 
-blacklist = ["ovs-vswitchd", "minion", "ovn-controller", "cadvisor", "ovsdb-server", "etcd"]
+blacklist = ["ovs-vswitchd", "minion", "ovn-controller", "cadvisor", "ovsdb-server"]
 interval = 5 # Number of seconds of data that we are getting back from cadvisor per container
 
 def total_min_max(stat, s_total, s_min, s_max):
@@ -52,14 +52,13 @@ def getStats(ip, port):
     r = requests.get(cadvisor_url)
     entries = []
     for key, value in r.json().items():
-
+        print key
         # Determine if one of the aliases matches (is something we want to collect metrics for)
         if value['aliases'][0] in blacklist:
             container_name = "ERROR " + value['aliases'][0]
             continue
         else:
-            name = value['spec']['image'].replace("quilt/", "")
-            container_name = name[0:10] + "@" + ip
+            container_name = "docker://" + value['id']
 
         # Compute the timestamp, using the first second in this series
         # Run through all the stat entries for this container

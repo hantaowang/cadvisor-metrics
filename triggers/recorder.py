@@ -4,7 +4,7 @@ from threading import Thread
 from sender import poll
 
 REDIS_HOST = "localhost"
-REDIS_PORT = "12345"
+REDIS_PORT = "6379"
 STATS_LEN = 1024
 
 
@@ -12,15 +12,18 @@ class Recorder:
 
     def __init__(self):
         self.ip = []
-        self.client = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
+        self.client = None
 
     # adds a new machine to start watching
     def new_machine(self, new_ip, port):
         self.ip.append((new_ip, port))
+        print self.ip
 
     # gets data from source and puts it in redis
     def post_to_redis(self, ip):
+        print "post_to_redis " + str(ip)
         results = poll(ip[0], ip[1])
+        print results
         for re in results["stats"]:
             container_id = re["name"]
             self.client.lpush(container_id, json.dumps(re))
@@ -36,7 +39,15 @@ class Recorder:
 
     # Collects every 5 seconds, runs forever
     def run(self):
-        Thread(target=self.collect()).start()
+        self.client = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
+        while True:
+            try:
+                self.client.ping()
+                break
+            except redis.exceptions.ConnectionError:
+                continue
+
+        Thread(target=self.collect).start()
  
     # Retrieves data from redis, returns it
     def retrieve(self, container_id, delta):
@@ -48,4 +59,4 @@ class Recorder:
             parsed = json.loads(r)
             if now - dateutil.parser.parse(parsed["end"]) < dt:
                 results.append(r)
-        return json.dumps(r)
+        return json.dumps(results)

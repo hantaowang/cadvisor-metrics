@@ -10,17 +10,18 @@ def ping():
     return 'pong'
 
 
-@app.route('/newmachine')
+@app.route('/newmachine', methods=['GET', 'POST'])
 def newmachine():
+    print request.form
     ip = request.form.get('machineip', None)
-    port = request.form.get('machineport', None)
+    port = request.form.get('machineport', '4194')
     if ip is not None and port is not None:
         rec.new_machine(ip.strip(), port.strip())
         return 'success'
     return 'failure'
 
 
-@app.route('/getdatapoints')
+@app.route('/getdatapoints', methods=['GET', 'POST'])
 def getdatapoints():
     container_id = request.form.get('containerid', None)
     period = request.form.get('period', "30")
