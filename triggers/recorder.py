@@ -3,8 +3,8 @@ import dateutil.parser
 from threading import Thread
 from sender import poll
 
-REDIS_HOST = "localhost"
-REDIS_PORT = "12345"
+REDIS_HOST = "http://cm-redis-master.default.svc.cluster.local"
+REDIS_PORT = "6379"
 STATS_LEN = 1024
 
 
@@ -13,6 +13,7 @@ class Recorder:
     def __init__(self):
         self.ip = []
         self.client = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
+
 
     # adds a new machine to start watching
     def new_machine(self, new_ip, port):
@@ -36,7 +37,7 @@ class Recorder:
 
     # Collects every 5 seconds, runs forever
     def run(self):
-        Thread(target=self.collect()).start()
+        Thread(target=self.collect).start()
  
     # Retrieves data from redis, returns it
     def retrieve(self, container_id, delta):

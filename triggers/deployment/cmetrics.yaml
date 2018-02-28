@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cm-redis-master
+  labels:
+    app: redis
+    tier: backend
+    role: master
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    tier: backend
+    role: master
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cm-redis-master
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: master
+        image: k8s.gcr.io/redis:e2e
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cm-redis-slave
+  labels:
+    app: redis
+    tier: backend
+    role: slave
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis
+    tier: backend
+    role: slave
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cm-redis-slave
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: slave
+        tier: backend
+    spec:
+      containers:
+      - name: slave
+        image: mhwangc/cm-redis-slave:v1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cmetrics-server
+  labels:
+    app: cmetrics
+    name: cmetrics-server
+spec:
+  type: NodePort
+  ports:
+  - port: 5000
+  selector:
+    app: cmetrics
+    name: cmetrics-server
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cmetrics-server
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cmetrics
+        name: cmetrics-server
+    spec:
+      containers:
+      - name: cm-server
+        image: mhwangc/cm-server:v2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
