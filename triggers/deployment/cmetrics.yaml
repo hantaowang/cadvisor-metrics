@@ -88,9 +88,12 @@ metadata:
     app: cmetrics
     name: cmetrics-server
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - port: 5000
+    targetPort: 5000
+    protocol: TCP
+    name: http
   selector:
     app: cmetrics
     name: cmetrics-server
