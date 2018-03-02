@@ -49,3 +49,19 @@ Each data point will look like:
    
 I am actually unsure of / forgot the units of diskio (b or kb), memory (b or kb), and cpu (???).
 Will update later when I find out.
+
+
+### How to Deploy
+
+Have your Kubernetes cluster up and running. In `cadvisor-metrics/triggers/deployment` run
+
+```
+kubectl create -f cmetrics.yaml
+```
+
+To obtain the URL of the python server, run
+
+```
+kubectl describe services cmetrics-server
+```
+The url is under LoadBalancer Ingress. Access the server through port 5000.
